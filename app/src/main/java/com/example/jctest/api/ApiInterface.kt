@@ -10,4 +10,7 @@ interface ApiInterface {
     @GET("posts/{ID}")
     suspend fun getUserById(@Path("ID") id: Int): Response<User>
 
+    @GET("posts")
+    suspend fun getAllUsers(): Response<List<User>>
+
 }

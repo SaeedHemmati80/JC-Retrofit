@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,25 +60,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            var body by remember {
-                mutableStateOf("Loading...")
+            var usersList by remember {
+                mutableStateOf(listOf<User>())
             }
-            var id by remember {
-                mutableStateOf(0)
-            }
-            var title by remember {
-                mutableStateOf("Loading...")
-            }
-            var userId by remember {
-                mutableStateOf(0)
-            }
-            
             val scope = rememberCoroutineScope()
 
             LaunchedEffect(key1 = true) {
                 scope.launch(Dispatchers.IO) {
                     val response = try {
-                        RetrofitInstance.api.getUserById(5)
+                        RetrofitInstance.api.getAllUsers()
 
                     } catch (e: IOException) {
                         Log.e("error", "I/O Error ${e.message}")
@@ -87,19 +79,14 @@ class MainActivity : ComponentActivity() {
                         return@launch
                     }
                     if (response.isSuccessful && response.body() != null) {
-                        withContext(Dispatchers.IO) {
-
-                            body = response.body()!!.body
-                            title = response.body()!!.title
-                            userId = response.body()!!.userId
-                            id = response.body()!!.id
-
+                        withContext(Dispatchers.Main) {
+                            usersList = response.body()!!
                         }
                     }
                 }
             }
 
-            UserUI(id = id, userId = userId, title = title, body = body)
+            LazyColumnUser(userList = usersList)
 
 
         }
@@ -107,14 +94,34 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun UserUI(modifier: Modifier = Modifier, id: Int, userId: Int, title: String, body: String) {
+fun LazyColumnUser(userList: List<User>){
 
+    Text(
+        modifier = Modifier.fillMaxWidth()
+            .background(Color.Yellow)
+            .padding(bottom = 10.dp),
+        text = "Retrofit",
+        textAlign = TextAlign.Center,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold)
 
+    LazyColumn(
+        modifier = Modifier.padding(top = 40.dp)
+    ){
+        items(userList.size){
+            UserUI(userList = userList, itemIndex = it)
+        }
+    }
+
+}
+
+@Composable
+fun UserUI(modifier: Modifier = Modifier, userList: List<User>, itemIndex: Int) {
     Card(
         modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(16.dp),
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(6.dp)
     ) {
@@ -123,10 +130,15 @@ fun UserUI(modifier: Modifier = Modifier, id: Int, userId: Int, title: String, b
                 .wrapContentSize()
                 .padding(10.dp),
         ) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            val currentUser = userList[itemIndex]
+
+            Text(text = "User: ${currentUser.userId} -> Id: ${currentUser.id}", fontWeight = FontWeight.Bold,)
             Spacer(modifier = modifier.height(10.dp))
-            Text(text = body)
-            Text(text = "User: $userId\nId: $id")
+            Text(text = "Title:", fontWeight = FontWeight.Bold)
+            Text(text = currentUser.title)
+            Text(text = "Body:", fontWeight = FontWeight.Bold)
+            Text(text = currentUser.body, maxLines = 3, overflow = TextOverflow.Ellipsis)
+
         }
     }
 
