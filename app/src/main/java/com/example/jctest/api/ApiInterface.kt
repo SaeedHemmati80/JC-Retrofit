@@ -4,6 +4,7 @@ import com.example.jctest.models.User
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiInterface {
 
@@ -12,5 +13,8 @@ interface ApiInterface {
 
     @GET("posts")
     suspend fun getAllUsers(): Response<List<User>>
+
+    @GET("posts")
+    suspend fun getDataByUserId(@Query("userId") userId: Int): Response<List<User>>
 
 }
