@@ -1,6 +1,6 @@
 package com.example.jctest
 
-import android.net.http.HttpException
+ import android.net.http.HttpException
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(key1 = true) {
                 scope.launch(Dispatchers.IO) {
                     val response = try {
-                        RetrofitInstance.api.getAllUsers()
+                        RetrofitInstance.api.getDataByUserId(userId = 8, sort = "id", order = "desc")
 
                     } catch (e: IOException) {
                         Log.e("error", "I/O Error ${e.message}")
