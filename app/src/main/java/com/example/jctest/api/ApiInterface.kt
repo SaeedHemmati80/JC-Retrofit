@@ -15,6 +15,10 @@ interface ApiInterface {
     suspend fun getAllUsers(): Response<List<User>>
 
     @GET("posts")
-    suspend fun getDataByUserId(@Query("userId") userId: Int): Response<List<User>>
+    suspend fun getDataByUserId(
+        @Query("userId") userId: Int,
+        @Query("_sort") sort: String,
+        @Query("_order") order: String
+    ): Response<List<User>>
 
 }
