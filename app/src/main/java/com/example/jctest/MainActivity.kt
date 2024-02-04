@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.jctest.api.RetrofitInstance
-import com.example.jctest.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -69,8 +68,12 @@ class MainActivity : ComponentActivity() {
                 scope.launch(Dispatchers.IO) {
                     val response = try {
 
-                        val user1 = User("new body", null, "new Tile", 33)
-                        RetrofitInstance.api.createUser(user1)
+                        // 1)
+//                        val user1 = User("new body", null, "new Tile", 33)
+//                        RetrofitInstance.api.createUrlUser(user1)
+
+                        // 2)
+                        RetrofitInstance.api.createUrlUser(11, "url title", "url body")
 
                     } catch (e: IOException) {
                         Log.e("error", "I/O Error ${e.message}")
