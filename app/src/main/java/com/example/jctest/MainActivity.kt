@@ -30,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.jctest.api.RetrofitInstance
-import com.example.jctest.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,8 +69,7 @@ class MainActivity : ComponentActivity() {
                     val response = try {
 
 
-                        val user1 = User("post body", null, null, 5)
-                        RetrofitInstance.api.updateUserByPatch(33, user1)
+                        RetrofitInstance.api.deleteUser(33)
 
                     } catch (e: IOException) {
                         Log.e("error", "I/O Error ${e.message}")
@@ -84,8 +82,8 @@ class MainActivity : ComponentActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         withContext(Dispatchers.Main) {
 
-                            id = response.body()!!.id!!
-                            body = response.body()!!.body
+                            id = response.body()!!.id
+                            body = response.body()!!.body.toString()
                             userId = response.body()!!.userId
                             title = response.body()!!.title.toString()
                             responseCode = response.code()
